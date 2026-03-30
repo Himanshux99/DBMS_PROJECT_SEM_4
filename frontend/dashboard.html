@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CashFlow - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>CashFlow</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-link active">
+          <span class="icon">📊</span> Dashboard
+        </a>
+        <a href="transactions.html" class="nav-link">
+          <span class="icon">💳</span> Transactions
+        </a>
+        <a href="audit.html" class="nav-link" id="audit-link" style="display: none;">
+          <span class="icon">📋</span> Audit Logs
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <p id="user-name">User</p>
+          <p id="user-email" class="user-email">email@example.com</p>
+        </div>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="header">
+        <h2>Dashboard</h2>
+        <div class="header-actions">
+          <button class="btn-action" onclick="openDepositModal()">+ Deposit</button>
+          <button class="btn-action" onclick="openWithdrawModal()">- Withdraw</button>
+          <button class="btn-action" onclick="openTransferModal()">→ Transfer</button>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <h3>Total Balance</h3>
+          <p class="amount" id="total-balance">$0.00</p>
+          <p class="label">Across all accounts</p>
+        </div>
+        <div class="summary-card">
+          <h3>Monthly Inflow</h3>
+          <p class="amount inflow" id="monthly-inflow">$0.00</p>
+          <p class="label" id="inflow-label">This month</p>
+        </div>
+        <div class="summary-card">
+          <h3>Monthly Outflow</h3>
+          <p class="amount outflow" id="monthly-outflow">$0.00</p>
+          <p class="label" id="outflow-label">This month</p>
+        </div>
+        <div class="summary-card">
+          <h3>Net Cash Flow</h3>
+          <p class="amount" id="net-cashflow">$0.00</p>
+          <p class="label" id="net-label">This month</p>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <div class="chart-container">
+          <h3>Balance Trend (6 Months)</h3>
+          <canvas id="balanceTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Accounts Section -->
+      <div class="accounts-section">
+        <h3>Your Accounts</h3>
+        <div class="accounts-grid" id="accounts-grid">
+          <!-- Accounts will be loaded here -->
+        </div>
+        <button class="btn-secondary" onclick="openCreateAccountModal()">+ Create Account</button>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="recent-transactions">
+        <h3>Recent Transactions</h3>
+        <div class="transactions-table">
+          <table id="recent-transactions-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="recent-transactions-body">
+              <!-- Transactions will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <!-- Deposit Modal -->
+  <div id="depositModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModalById('depositModal')">&times;</span>
+      <h2>Deposit</h2>
+      <form onsubmit="handleDeposit(event)">
+        <div class="form-group">
+          <label for="deposit-account">Select Account</label>
+          <select id="deposit-account" required>
+            <option value="">Choose an account</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="deposit-amount">Amount ($)</label>
+          <input type="number" id="deposit-amount" step="0.01" min="0.01" placeholder="0.00" required>
+        </div>
+        <button type="submit" class="btn-primary">Deposit</button>
+        <div id="deposit-error" class="error-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Withdraw Modal -->
+  <div id="withdrawModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModalById('withdrawModal')">&times;</span>
+      <h2>Withdraw</h2>
+      <form onsubmit="handleWithdraw(event)">
+        <div class="form-group">
+          <label for="withdraw-account">Select Account</label>
+          <select id="withdraw-account" required>
+            <option value="">Choose an account</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="withdraw-amount">Amount ($)</label>
+          <input type="number" id="withdraw-amount" step="0.01" min="0.01" placeholder="0.00" required>
+        </div>
+        <button type="submit" class="btn-primary">Withdraw</button>
+        <div id="withdraw-error" class="error-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Transfer Modal -->
+  <div id="transferModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModalById('transferModal')">&times;</span>
+      <h2>Transfer</h2>
+      <form onsubmit="handleTransfer(event)">
+        <div class="form-group">
+          <label for="transfer-from">From Account</label>
+          <select id="transfer-from" required>
+            <option value="">Choose source account</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="transfer-to">To Account</label>
+          <select id="transfer-to" required>
+            <option value="">Choose destination account</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="transfer-amount">Amount ($)</label>
+          <input type="number" id="transfer-amount" step="0.01" min="0.01" placeholder="0.00" required>
+        </div>
+        <button type="submit" class="btn-primary">Transfer</button>
+        <div id="transfer-error" class="error-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Account Modal -->
+  <div id="createAccountModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModalById('createAccountModal')">&times;</span>
+      <h2>Create Account</h2>
+      <form onsubmit="handleCreateAccount(event)">
+        <div class="form-group">
+          <label for="account-type">Account Type</label>
+          <select id="account-type" required>
+            <option value="">Select type</option>
+            <option value="Savings">Savings</option>
+            <option value="Checking">Checking</option>
+            <option value="Current">Current</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="initial-balance">Initial Balance ($)</label>
+          <input type="number" id="initial-balance" step="0.01" min="0" placeholder="0.00">
+        </div>
+        <button type="submit" class="btn-primary">Create Account</button>
+        <div id="createAccount-error" class="error-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

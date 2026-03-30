@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CashFlow - Transactions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>CashFlow</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-link">
+          <span class="icon">📊</span> Dashboard
+        </a>
+        <a href="transactions.html" class="nav-link active">
+          <span class="icon">💳</span> Transactions
+        </a>
+        <a href="audit.html" class="nav-link" id="audit-link" style="display: none;">
+          <span class="icon">📋</span> Audit Logs
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <p id="user-name">User</p>
+          <p id="user-email" class="user-email">email@example.com</p>
+        </div>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="header">
+        <h2>Transactions</h2>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section">
+        <div class="filter-group">
+          <label for="filter-type">Type</label>
+          <select id="filter-type">
+            <option value="">All Types</option>
+            <option value="Transfer">Transfer</option>
+            <option value="Deposit">Deposit</option>
+            <option value="Withdrawal">Withdrawal</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-status">Status</label>
+          <select id="filter-status">
+            <option value="">All Status</option>
+            <option value="Completed">Completed</option>
+            <option value="Pending">Pending</option>
+            <option value="Failed">Failed</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-account">Account</label>
+          <select id="filter-account">
+            <option value="">All Accounts</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-date-from">From Date</label>
+          <input type="date" id="filter-date-from">
+        </div>
+        <div class="filter-group">
+          <label for="filter-date-to">To Date</label>
+          <input type="date" id="filter-date-to">
+        </div>
+        <button class="btn-secondary" onclick="applyFilters()">Apply Filters</button>
+        <button class="btn-secondary" onclick="resetFilters()">Reset</button>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="transactions-table">
+        <table id="transactions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>From Account</th>
+              <th>To Account</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="transactions-body">
+            <!-- Transactions will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button id="prev-btn" class="btn-secondary" onclick="previousPage()">Previous</button>
+        <span id="page-info">Page 1</span>
+        <button id="next-btn" class="btn-secondary" onclick="nextPage()">Next</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
