@@ -5,6 +5,7 @@ const {
   getAccountById,
   getAccountBalance,
   updateAccountStatus,
+  getDestinationAccounts,
 } = require('../controllers/accountsController');
 const { verifyToken } = require('../middleware/auth');
 
@@ -24,6 +25,12 @@ router.get('/', getAllAccounts);
  * Create a new account
  */
 router.post('/', createAccount);
+
+/**
+ * GET /api/accounts/destinations
+ * Get all destination accounts for transfers
+ */
+router.get('/destinations', getDestinationAccounts);
 
 /**
  * GET /api/accounts/:account_id

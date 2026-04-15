@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CashFlow - Smart Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>CashFlow</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-link">
+          <i data-lucide="layout-dashboard" class="icon"></i> Dashboard
+        </a>
+        <a href="transactions.html" class="nav-link">
+          <i data-lucide="credit-card" class="icon"></i> Transactions
+        </a>
+        <a href="analytics.html" class="nav-link active">
+          <i data-lucide="bar-chart-2" class="icon"></i> Smart Analytics
+        </a>
+        <a href="audit.html" class="nav-link" id="audit-link" style="display: none;">
+          <i data-lucide="clipboard-list" class="icon"></i> Audit Logs
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <p id="user-name">User</p>
+          <p id="user-email" class="user-email">email@example.com</p>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i data-lucide="log-out" class="icon"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="header">
+        <h2>Smart Analytics</h2>
+      </div>
+
+      <!-- ============================================
+           Analytics Section
+           Uses 4 SQL concepts: HAVING, Subquery, UNION, Views
+           ============================================ -->
+      <div class="analytics-section">
+        <div class="analytics-header">
+          <h3><i data-lucide="bar-chart-2" class="icon"></i> Insights Overview</h3>
+          <p class="analytics-subtitle">Deep dive into your financial data using advanced SQL concepts.</p>
+        </div>
+
+        <div class="analytics-grid">
+
+          <!-- Card 1: Subquery — Above Average Balance -->
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <div class="analytics-card-icon" style="background: #fef3c7;">
+                <i data-lucide="trending-up" style="color: #d97706; width:20px; height:20px;"></i>
+              </div>
+              <div>
+                <h4>Above Average Balance</h4>
+                <span class="sql-badge sql-badge-subquery">SUBQUERY</span>
+              </div>
+            </div>
+            <div id="above-avg-content" class="analytics-card-body">
+              <div class="analytics-loading">Loading...</div>
+            </div>
+          </div>
+
+          <!-- Card 2: HAVING — Active Accounts -->
+          <div class="analytics-card">
+            <div class="analytics-card-header">
+              <div class="analytics-card-icon" style="background: #dbeafe;">
+                <i data-lucide="activity" style="color: #2563eb; width:20px; height:20px;"></i>
+              </div>
+              <div>
+                <h4>Most Active Accounts</h4>
+                <span class="sql-badge sql-badge-having">HAVING</span>
+              </div>
+            </div>
+            <div id="active-accounts-content" class="analytics-card-body">
+              <div class="analytics-loading">Loading...</div>
+            </div>
+          </div>
+
+          <!-- Card 3: View — Account Summary View -->
+          <div class="analytics-card analytics-card-wide">
+            <div class="analytics-card-header">
+              <div class="analytics-card-icon" style="background: #d1fae5;">
+                <i data-lucide="eye" style="color: #059669; width:20px; height:20px;"></i>
+              </div>
+              <div>
+                <h4>Account Summary View</h4>
+                <span class="sql-badge sql-badge-view">VIEW</span>
+              </div>
+            </div>
+            <!-- <p class="analytics-card-desc">Reads directly from the <code>vw_account_summary</code> database view</p> -->
+            <div id="view-summary-content" class="analytics-card-body">
+              <div class="analytics-loading">Loading...</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

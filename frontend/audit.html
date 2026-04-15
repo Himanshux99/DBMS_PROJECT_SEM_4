@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CashFlow - Audit Logs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
   <div class="dashboard-container">
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h1>CashFlow</h1>
+        <h1>MAMO</h1>
       </div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-link">
-          <span class="icon">📊</span> Dashboard
+          <i data-lucide="layout-dashboard" class="icon"></i> Dashboard
         </a>
         <a href="transactions.html" class="nav-link">
-          <span class="icon">💳</span> Transactions
+          <i data-lucide="credit-card" class="icon"></i> Transactions
         </a>
         <a href="audit.html" class="nav-link active">
-          <span class="icon">📋</span> Audit Logs
+          <i data-lucide="clipboard-list" class="icon"></i> Audit Logs
         </a>
       </nav>
       <div class="sidebar-footer">
@@ -29,7 +33,9 @@
           <p id="user-name">User</p>
           <p id="user-email" class="user-email">email@example.com</p>
         </div>
-        <button class="btn-logout" onclick="logout()">Logout</button>
+        <button class="btn-logout" onclick="logout()">
+          <i data-lucide="log-out" class="icon"></i> Logout
+        </button>
       </div>
     </aside>
 
@@ -41,7 +47,8 @@
 
       <!-- Access Denied Alert -->
       <div id="access-denied" class="alert alert-error" style="display: none;">
-        <strong>Access Denied:</strong> You do not have permission to view audit logs. Only administrators can access this page.
+        <strong>Access Denied:</strong> You do not have permission to view audit logs. Only administrators can access
+        this page.
       </div>
 
       <!-- Filters -->
@@ -83,9 +90,13 @@
 
       <!-- Pagination -->
       <div class="pagination" id="pagination" style="display: none;">
-        <button id="prev-btn" class="btn-secondary" onclick="previousAuditPage()">Previous</button>
+        <button id="prev-btn" class="btn-secondary" onclick="previousAuditPage()">
+          <i data-lucide="chevron-left" class="icon"></i> Previous
+        </button>
         <span id="page-info">Page 1</span>
-        <button id="next-btn" class="btn-secondary" onclick="nextAuditPage()">Next</button>
+        <button id="next-btn" class="btn-secondary" onclick="nextAuditPage()">
+          Next <i data-lucide="chevron-right" class="icon" style="margin-right:0; margin-left:8px;"></i>
+        </button>
       </div>
 
       <!-- Audit Stats -->
@@ -103,4 +114,5 @@
 
   <script src="app.js"></script>
 </body>
+
 </html>

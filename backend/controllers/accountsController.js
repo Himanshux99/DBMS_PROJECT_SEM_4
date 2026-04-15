@@ -211,10 +211,37 @@ const updateAccountStatus = async (req, res) => {
   }
 };
 
+/**
+ * Get all active accounts for other users (for transfer dropdown)
+ * GET /api/accounts/destinations
+ */
+const getDestinationAccounts = async (req, res) => {
+  try {
+    const userId = req.user.user_id;
+    const connection = await pool.getConnection();
+
+    const [destinations] = await connection.query(
+      `SELECT a.account_id, a.account_type, u.name, u.email 
+       FROM Account a
+       JOIN User u ON a.user_id = u.user_id
+       WHERE a.user_id != ? AND a.status = 'Active'
+       ORDER BY u.name, a.account_type`,
+      [userId]
+    );
+
+    connection.release();
+    res.json({ destinations });
+  } catch (error) {
+    console.error('Get destinations error:', error);
+    res.status(500).json({ error: 'Failed to fetch destination accounts', details: error.message });
+  }
+};
+
 module.exports = {
   getAllAccounts,
   createAccount,
   getAccountById,
   getAccountBalance,
   updateAccountStatus,
+  getDestinationAccounts,
 };

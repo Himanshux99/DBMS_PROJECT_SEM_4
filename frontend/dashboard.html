@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CashFlow - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -16,13 +18,16 @@
       </div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-link active">
-          <span class="icon">📊</span> Dashboard
+          <i data-lucide="layout-dashboard" class="icon"></i> Dashboard
         </a>
         <a href="transactions.html" class="nav-link">
-          <span class="icon">💳</span> Transactions
+          <i data-lucide="credit-card" class="icon"></i> Transactions
+        </a>
+        <a href="analytics.html" class="nav-link">
+          <i data-lucide="bar-chart-2" class="icon"></i> Smart Analytics
         </a>
         <a href="audit.html" class="nav-link" id="audit-link" style="display: none;">
-          <span class="icon">📋</span> Audit Logs
+          <i data-lucide="clipboard-list" class="icon"></i> Audit Logs
         </a>
       </nav>
       <div class="sidebar-footer">
@@ -30,7 +35,9 @@
           <p id="user-name">User</p>
           <p id="user-email" class="user-email">email@example.com</p>
         </div>
-        <button class="btn-logout" onclick="logout()">Logout</button>
+        <button class="btn-logout" onclick="logout()">
+          <i data-lucide="log-out" class="icon"></i> Logout
+        </button>
       </div>
     </aside>
 
@@ -39,40 +46,68 @@
       <div class="header">
         <h2>Dashboard</h2>
         <div class="header-actions">
-          <button class="btn-action" onclick="openDepositModal()">+ Deposit</button>
-          <button class="btn-action" onclick="openWithdrawModal()">- Withdraw</button>
-          <button class="btn-action" onclick="openTransferModal()">→ Transfer</button>
+          <button class="btn-action" onclick="openDepositModal()"><i data-lucide="plus-circle" class="icon"></i> Deposit</button>
+          <button class="btn-action" onclick="openWithdrawModal()"><i data-lucide="minus-circle" class="icon"></i> Withdraw</button>
+          <button class="btn-action" onclick="openTransferModal()"><i data-lucide="send" class="icon"></i> Transfer</button>
         </div>
       </div>
 
       <!-- Summary Cards -->
       <div class="summary-cards">
         <div class="summary-card">
-          <h3>Total Balance</h3>
-          <p class="amount" id="total-balance">$0.00</p>
-          <p class="label">Across all accounts</p>
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <h3>Total Balance</h3>
+              <p class="amount" id="total-balance">$0.00</p>
+              <p class="label">Across all accounts</p>
+            </div>
+            <i data-lucide="wallet" class="icon" style="color: var(--accent-teal);"></i>
+          </div>
         </div>
         <div class="summary-card">
-          <h3>Monthly Inflow</h3>
-          <p class="amount inflow" id="monthly-inflow">$0.00</p>
-          <p class="label" id="inflow-label">This month</p>
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <h3>Monthly Inflow</h3>
+              <p class="amount inflow" id="monthly-inflow">$0.00</p>
+              <p class="label" id="inflow-label">This month</p>
+            </div>
+            <i data-lucide="arrow-down-left" class="icon" style="color: var(--success-green);"></i>
+          </div>
         </div>
         <div class="summary-card">
-          <h3>Monthly Outflow</h3>
-          <p class="amount outflow" id="monthly-outflow">$0.00</p>
-          <p class="label" id="outflow-label">This month</p>
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <h3>Monthly Outflow</h3>
+              <p class="amount outflow" id="monthly-outflow">$0.00</p>
+              <p class="label" id="outflow-label">This month</p>
+            </div>
+            <i data-lucide="arrow-up-right" class="icon" style="color: var(--accent-red);"></i>
+          </div>
         </div>
         <div class="summary-card">
-          <h3>Net Cash Flow</h3>
-          <p class="amount" id="net-cashflow">$0.00</p>
-          <p class="label" id="net-label">This month</p>
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div>
+              <h3>Net Cash Flow</h3>
+              <p class="amount" id="net-cashflow">$0.00</p>
+              <p class="label" id="net-label">This month</p>
+            </div>
+            <i data-lucide="activity" class="icon" style="color: var(--accent-teal);"></i>
+          </div>
         </div>
       </div>
 
       <!-- Charts Section -->
       <div class="charts-section">
         <div class="chart-container">
-          <h3>Balance Trend (6 Months)</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 id="chart-title" style="margin: 0;">Balance Trend (6 Months)</h3>
+            <select id="chart-range" onchange="loadBalanceTrendChart(this.value)" style="padding: 0.5rem; background: var(--bg-dark); color: var(--text-light); border: 1px solid var(--border-color); border-radius: 4px; outline: none; cursor: pointer;">
+              <option value="3">Last 3 Months</option>
+              <option value="6" selected>Last 6 Months</option>
+              <option value="12">Last 1 Year</option>
+              <option value="24">Last 2 Years</option>
+            </select>
+          </div>
           <canvas id="balanceTrendChart"></canvas>
         </div>
       </div>
@@ -83,7 +118,7 @@
         <div class="accounts-grid" id="accounts-grid">
           <!-- Accounts will be loaded here -->
         </div>
-        <button class="btn-secondary" onclick="openCreateAccountModal()">+ Create Account</button>
+        <button class="btn-secondary" onclick="openCreateAccountModal()"><i data-lucide="plus" class="icon"></i> Create Account</button>
       </div>
 
       <!-- Recent Transactions -->
@@ -105,6 +140,9 @@
           </table>
         </div>
       </div>
+
+      </div>
+
     </main>
   </div>
 
@@ -166,9 +204,9 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="transfer-to">To Account</label>
+          <label for="transfer-to">Destination Account</label>
           <select id="transfer-to" required>
-            <option value="">Choose destination account</option>
+            <option value="">Choose destination user/account</option>
           </select>
         </div>
         <div class="form-group">

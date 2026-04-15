@@ -28,8 +28,10 @@ const getCashFlowSummary = async (req, res) => {
 
     connection.release();
 
-    if (summary.length === 0) {
-      return res.json({
+    if (summary[0] && summary[0].length > 0) {
+      res.json(summary[0][0]);
+    } else {
+      res.json({
         month: parseInt(month),
         year: parseInt(year),
         total_inflow: 0,
@@ -38,8 +40,6 @@ const getCashFlowSummary = async (req, res) => {
         total_transactions: 0,
       });
     }
-
-    res.json(summary[0]);
   } catch (error) {
     console.error('Get cashflow error:', error);
     res.status(500).json({ error: 'Failed to fetch cashflow summary', details: error.message });
@@ -53,6 +53,7 @@ const getCashFlowSummary = async (req, res) => {
 const getBalanceTrend = async (req, res) => {
   try {
     const userId = req.user.user_id;
+    const months = parseInt(req.query.months) || 6;
 
     const connection = await pool.getConnection();
 
@@ -83,7 +84,7 @@ const getBalanceTrend = async (req, res) => {
       FROM Transaction
       WHERE (from_account_id IN (${accountIds.join(',')}) OR to_account_id IN (${accountIds.join(',')}))
         AND status = 'Completed'
-        AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+        AND created_at >= DATE_SUB(CURDATE(), INTERVAL ${months} MONTH)
       GROUP BY YEAR(created_at), MONTH(created_at), DATE_FORMAT(created_at, '%Y-%m')
       ORDER BY year ASC, month ASC
     `;
@@ -96,17 +97,37 @@ const getBalanceTrend = async (req, res) => {
       [userId]
     );
 
-    let runningBalance = (currentBalance[0]?.total || 0) - trend.reduce((sum, t) => sum + (t.monthly_net || 0), 0);
+    // Generate empty array for all requested months
+    const allMonths = [];
+    const now = new Date();
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const y = d.getFullYear();
+      const m = d.getMonth() + 1;
+      const my = `${y}-${m.toString().padStart(2, '0')}`;
+      allMonths.push({ year: y, month: m, month_year: my, monthly_net: 0 });
+    }
 
-    const balanceTrend = trend.map(t => {
-      const balance = runningBalance + t.monthly_net;
-      runningBalance = balance;
+    // Merge actual transactions into the empty array
+    trend.forEach(t => {
+      const match = allMonths.find(m => m.month_year === t.month_year);
+      if (match) {
+        match.monthly_net = parseFloat(t.monthly_net || 0);
+      }
+    });
+
+    let currentTotal = parseFloat(currentBalance[0]?.total || 0);
+    let totalNet = allMonths.reduce((sum, t) => sum + t.monthly_net, 0);
+    let runningBalance = currentTotal - totalNet;
+
+    const balanceTrend = allMonths.map(t => {
+      runningBalance = runningBalance + t.monthly_net;
       return {
         month: t.month,
         year: t.year,
         month_year: t.month_year,
-        balance: Math.round(balance * 100) / 100,
-        monthly_net: Math.round(t.monthly_net * 100) / 100,
+        balance: Math.round(runningBalance * 100) / 100,
+        monthly_net: t.monthly_net,
       };
     });
 
@@ -170,7 +191,7 @@ const getDashboardSummary = async (req, res) => {
         month: parseInt(month),
         year: parseInt(year),
       },
-      cashflow: cashflow[0] || {
+      cashflow: (cashflow[0] && cashflow[0][0]) ? cashflow[0][0] : {
         total_inflow: 0,
         total_outflow: 0,
         net_cash_flow: 0,
